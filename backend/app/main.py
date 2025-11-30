@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from .database import Base, engine
 from .routers import auth_router, student_router, teacher_router, files_router
@@ -7,6 +8,8 @@ from .routers import auth_router, student_router, teacher_router, files_router
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Единая Веб-Платформа для Обучения")
+
+app.mount("/app/files", StaticFiles(directory="app/files"), name="files")
 
 app.add_middleware(
     CORSMiddleware,

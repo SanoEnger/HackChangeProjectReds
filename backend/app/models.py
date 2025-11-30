@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from .database import Base
 
-
 class User(Base):
     __tablename__ = "users"
 
@@ -10,10 +9,9 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     password_hash = Column(String)
     role = Column(String)  
-
     
     courses = relationship("Course", back_populates="teacher")
-
+    enrollments = relationship("Enrollment", back_populates="student")
 
 class Course(Base):
     __tablename__ = "courses"
@@ -21,13 +19,22 @@ class Course(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
     description = Column(Text)
-
     teacher_id = Column(Integer, ForeignKey("users.id"))
+    
     teacher = relationship("User", back_populates="courses")
-
     lectures = relationship("Lecture", back_populates="course")
     assignments = relationship("Assignment", back_populates="course")
+    enrollments = relationship("Enrollment", back_populates="course")
 
+class Enrollment(Base):
+    __tablename__ = "enrollments"
+
+    id = Column(Integer, primary_key=True)
+    student_id = Column(Integer, ForeignKey("users.id"))
+    course_id = Column(Integer, ForeignKey("courses.id"))
+    
+    student = relationship("User", back_populates="enrollments")
+    course = relationship("Course", back_populates="enrollments")
 
 class Lecture(Base):
     __tablename__ = "lectures"
@@ -39,7 +46,6 @@ class Lecture(Base):
 
     course_id = Column(Integer, ForeignKey("courses.id"))
     course = relationship("Course", back_populates="lectures")
-
 
 class Assignment(Base):
     __tablename__ = "assignments"
@@ -53,7 +59,6 @@ class Assignment(Base):
 
     submissions = relationship("Submission", back_populates="assignment")
 
-
 class Submission(Base):
     __tablename__ = "submissions"
 
@@ -66,7 +71,6 @@ class Submission(Base):
 
     assignment = relationship("Assignment", back_populates="submissions")
     grade = relationship("Grade", back_populates="submission", uselist=False)
-
 
 class Grade(Base):
     __tablename__ = "grades"

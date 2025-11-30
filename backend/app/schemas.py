@@ -75,7 +75,8 @@ class LectureCreate(LectureBase):
 
 class LectureResponse(LectureBase):
     id: int
-    file_path: Optional[str]
+    course_id: int
+    file_path: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -95,6 +96,7 @@ class AssignmentCreate(AssignmentBase):
 class AssignmentResponse(AssignmentBase):
     id: int
     course_id: int
+    submissions_count: Optional[int] = 0
 
     class Config:
         from_attributes = True
@@ -137,3 +139,29 @@ class GradeResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class CourseUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+
+class EnrollmentCreate(BaseModel):
+    student_username: str
+
+class EnrollmentResponse(BaseModel):
+    id: int
+    student_id: int
+    course_id: int
+    student: UserResponse
+
+    class Config:
+        from_attributes = True
+
+class LectureCreate(LectureBase):
+    course_id: int
+
+class AssignmentCreate(AssignmentBase):
+    course_id: int
+
+class FileUploadResponse(BaseModel):
+    file_path: str
+    message: str
